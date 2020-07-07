@@ -9,6 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'openwisp2.settings')
 
 if __name__ == '__main__':
     from django.core.management import execute_from_command_line
+    import pytest
 
     args = sys.argv
     args.insert(1, 'test')
@@ -17,3 +18,4 @@ if __name__ == '__main__':
     else:
         args.insert(2, 'openwisp2')
     execute_from_command_line(args)
+    sys.exit(pytest.main(['openwisp_notifications/tests/test_websockets.py']))

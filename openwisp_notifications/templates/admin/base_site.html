@@ -15,13 +15,15 @@
     {% unread_notifications %}
   </div>
   {% csrf_token %}
+  {% notification_toast %}
   {% notification_widget %}
 {% endblock %}
-
 
 {% block footer %}
   {{ block.super }}
   <script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
   <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
   <script src="{% static 'openwisp_notifications/js/notification_widget.js' %}"></script>
+  <script src="{% static 'openwisp_notifications/js/vendor/reconnecting-websocket.min.js' %}"></script>
+  <script src="{% static 'openwisp_notifications/js/websockets.js' %}"></script>
 {% endblock footer %}

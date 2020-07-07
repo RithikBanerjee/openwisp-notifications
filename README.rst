@@ -95,6 +95,19 @@ Setup (integrate into an existing Django project)
 
     urlpatterns += staticfiles_urlpatterns()
 
+Add routes for websockets:
+
+.. code-block:: python
+
+    # In yourproject/routing.py
+    from channels.auth import AuthMiddlewareStack
+    from channels.routing import ProtocolTypeRouter, URLRouter
+    from openwisp_notifications.websockets import routing as ws_routing
+
+    application = ProtocolTypeRouter(
+        {'websocket': AuthMiddlewareStack(URLRouter(ws_routing.websocket_urlpatterns))}
+    )
+
 Configure caching (you may use a different cache storage if you want):
 
 .. code-block:: python
@@ -125,6 +138,25 @@ If you decide to use redis (as shown in these examples), make sure the python de
 .. code-block:: shell
 
     pip install redis django-redis
+
+Configure ``ASGI_APPLICATION``:
+
+.. code-block:: python
+
+    ASGI_APPLICATION = 'yourproject.routing.application'
+
+Configure channel layers (you may user a `different channel layer <https://channels.readthedocs.io/en/latest/topics/channel_layers.html#configuration>`_):
+
+.. code-block:: python
+
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                 "hosts": ["redis://localhost/7"],
+            },
+        },
+    }
 
 Sending notifications
 ---------------------
