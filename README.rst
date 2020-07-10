@@ -920,3 +920,9 @@ Support
 -------
 
 See `OpenWISP Support Channels <http://openwisp.org/support.html>`_.
+
+Attributions
+------------
+
+- `Icons <https://github.com/openwisp/openwisp-notifications/blob/master/openwisp_notifications/static/openwisp_notifications/images/icons/README.rst>`_
+- `Sound <https://github.com/openwisp/openwisp-notifications/blob/master/openwisp_notifications/static/openwisp_notifications/audio/README.rst>`_

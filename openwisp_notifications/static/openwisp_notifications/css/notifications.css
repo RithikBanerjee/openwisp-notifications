@@ -1,3 +1,16 @@
+.hide {
+  display: none;
+}
+.disabled {
+  color: grey !important;
+  pointer-events: none;
+}
+.round-bottom-border {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+/* Nntification bell */
 .ow-notifications {
   float: right;
   display: block;
@@ -38,23 +51,7 @@
   top: -1px;
 }
 
-/* Notification form */
-#notification_form .label {
-  font-weight: bold
-}
-#notification_form .form-row.field-data {
-  display: none
-}
-#notification_form .target {
-  margin: 13px 0 8px
-}
-#notification_form .target .button {
-  color: #fff;
-  padding: 8px 15px;
-  text-decoration: none;
-}
-
-/* Toasts for new notifications */
+/* Toasts for new notification */
 .toast{
   background-color: #d04124;
   position: fixed;
@@ -72,6 +69,127 @@
   font-weight: bold;
 }
 
+/* Notification widget dropdown */
+.notification-dropdown {
+  position: absolute;
+  z-index: 99;
+  right: 100px;
+  border: 2px solid #464646;
+  text-align: left;
+  width: 425px;
+  text-transform: none;
+  background-color: whitesmoke;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 1px black;
+  font-size: 12px;
+}
+.notification-dropdown .btn {
+  color: #df5d43;
+  cursor: pointer;
+}
+.notification-dropdown .filters {
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.notification-wrapper {
+  overflow-y: auto;
+  max-height: 70vh;
+  height: 100%;
+}
+.notification-elem {
+  cursor: pointer;
+  padding: 10px;
+  transition: 0.4s;
+  color: black;
+  font-weight: bold;
+  background-color: whitesmoke;
+}
+.notification-elem.unread{
+  background: #464646;
+  color: white;
+}
+.notification-elem p{
+  margin: 5px 15px;
+}
+.notification-meta{
+  display: flex;
+  justify-content: space-between;
+  color: #777;;
+  -webkit-text-stroke: 0.2px white;
+}
+.notification-elem:hover .notification-meta{
+  color: white;
+}
+.notification-elem a {
+  color: #df5d43 !important;
+}
+.notification-elem:hover a,
+.active a {
+  color: white !important;
+}
+.notification-elem:hover,
+.active {
+  background-color: #df5d43 !important;
+}
+.no-notifications {
+  color: #464646;
+  text-align: center;
+  font-weight: bold;
+  font-size: small;
+  padding: 8px;
+  background-color: whitesmoke;
+}
+
+/* Loader */
+.loader-wrapper {
+  box-shadow: 0px 0px 5px 1px black;
+  position: absolute;
+  top: 0px;
+  background: whitesmoke;
+  z-index: -1;
+  width: 100%;
+  border-radius: 5px;
+}
+.loader {
+  height: 4em;
+  width: 4em;
+  margin: 40px auto 4px auto;
+}
+
+/* Notification level icons */
+.icon{
+  min-height: 15px;
+  min-width: 15px;
+  background-repeat: no-repeat;
+  filter: invert(46%) sepia(4%) saturate(139%) hue-rotate(317deg) brightness(99%) contrast(85%);
+}
+.info {
+  background-image: url('/static/openwisp_notifications/images/icons/icon-info.svg');
+}
+.warning {
+  background-image: url('/static/openwisp_notifications/images/icons/icon-warning.svg');
+}
+.error {
+  background-image: url('/static/openwisp_notifications/images/icons/icon-error.svg');
+}
+.success {
+  background-image: url('/static/openwisp_notifications/images/icons/icon-success.svg');
+}
+.unread .icon {
+  filter: invert(46%) sepia(90%) saturate(1688%) hue-rotate(334deg) brightness(92%) contrast(89%);
+}
+.notification-elem:hover .icon{
+  filter: invert(95%) sepia(5%) saturate(0%) hue-rotate(81deg) brightness(104%) contrast(109%);
+}
+
+@media screen and (max-width: 425px) {
+  .notification-dropdown {
+    width: 100%;
+    right: 0px;
+  }
+}
+
 @media (max-width: 1024px) {
   .ow-notifications {
     display: block !important;
@@ -82,7 +200,10 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1025px){
+  .notification-dropdown {
+    width: 500px;
+  }
   #user-tools .user {
     line-height: 40px;
     margin-right: 3px;
