@@ -1,11 +1,13 @@
+import uuid
+
 import pytest
 from channels.db import database_sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
+from openwisp2.routing import application
 from openwisp_notifications.api.serializers import NotificationListSerializer
 from openwisp_notifications.signals import notify
 from openwisp_notifications.swapper import load_model
-from tests.openwisp2.routing import application
 
 Notification = load_model('Notification')
 User = get_user_model()
@@ -86,7 +88,7 @@ class TestNotificationSockets:
         with pytest.raises(AssertionError):
             await self._get_communicator(client)
 
-    async def test_recieve_with_authenticated_user(self, admin_user, admin_client):
+    async def test_receive(self, admin_user, admin_client):
         communicator = await self._get_communicator(admin_client)
         n = await create_notification(admin_user)
         # Assert message for new notification created
@@ -99,3 +101,15 @@ class TestNotificationSockets:
         assert res['notification_count'] == 0
         assert await communicator.receive_nothing() is True
         await communicator.disconnect()
+
+    async def test_receive_with_improper_data(self, admin_user, admin_client):
+        communicator = await self._get_communicator(admin_client)
+        # Check for JSONDecodeError
+        await communicator.send_to('Not JSON')
+        assert await communicator.receive_nothing() is True
+
+        await communicator.send_json_to({'notification': 'random'})
+        assert await communicator.receive_nothing() is True
+
+        await communicator.send_json_to({'notification_id': str(uuid.uuid4())})
+        assert await communicator.receive_nothing() is True

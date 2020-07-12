@@ -1,8 +1,12 @@
 # chat/routing.py
 from django.urls import path
 
-from . import consumers
+from . import consumers as ow_consumers
 
-websocket_urlpatterns = [
-    path('ws/notifications/', consumers.NotificationConsumer),
-]
+
+def get_routes(consumer=None):
+    if not consumer:
+        consumer = ow_consumers
+    return [
+        path('ws/notifications/', consumer.NotificationConsumer),
+    ]

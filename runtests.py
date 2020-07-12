@@ -18,4 +18,8 @@ if __name__ == '__main__':
     else:
         args.insert(2, 'openwisp2')
     execute_from_command_line(args)
-    sys.exit(pytest.main(['openwisp_notifications/tests/test_websockets.py']))
+    if os.environ.get('SAMPLE_APP', False):
+        app_dir = ['tests', 'openwisp2', 'sample_notifications']
+    else:
+        app_dir = ['openwisp_notifications']
+    sys.exit(pytest.main([os.path.join(*app_dir, 'tests', 'test_websockets.py')]))

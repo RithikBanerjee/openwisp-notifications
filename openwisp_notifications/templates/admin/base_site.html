@@ -9,7 +9,7 @@
 
 {% block userlinks %}
   <div class="ow-notifications" id="openwisp_notifications">
-    <img class="bell-icon" src="{% static "openwisp_notifications/images/icons/icon-bell.svg" %}" />
+    <img class="bell-icon" src="{% static 'openwisp_notifications/images/icons/icon-bell.svg' %}" />
     {% unread_notifications %}
   </div>
   {% csrf_token %}
