@@ -63,9 +63,15 @@
   top: 5%;
   display: none;
   cursor: pointer;
+  border: white solid 0.1px;
+  padding: 0.5em;
+}
+.toast > div{
+  display: flex;
+  align-items: center;
 }
 .toast p{
-  margin: 1em;
+  margin: 0.5em;
   font-weight: bold;
 }
 

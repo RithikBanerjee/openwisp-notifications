@@ -4,7 +4,7 @@ const notificationTimeoutMap = new Map();
 const notificationSocket = new ReconnectingWebSocket(
     `ws://${window.location.host}/ws/notifications/`
 );
-const notification_sound = new Audio('/static/openwisp_notifications/audio/notification_bell.mp3');
+const notificationSound = new Audio('/static/openwisp_notifications/audio/notification_bell.mp3');
 const observer = new IntersectionObserver(notificationIntersectionObserver, {
     threshold: 1,
     root: document.querySelector('.notification-wrapper')
@@ -219,8 +219,8 @@ function markNotificationRead(elem) {
         })
     );
     try {
-        elem.classList.remove('unread');
-    } catch (e) {}
+        document.querySelector(`#${elem.id}.notification-elem`).classList.remove('unread');
+    } catch (error) {}
     notificationReadStatus.set(elem.id, 'read');
     observer.unobserve(elem);
 }
@@ -248,23 +248,28 @@ function initWebSockets($) {
         }
         // Check whether to display notification toast
         if (data.notification) {
-            $('.toast').html(data.notification.message);
-            $('.toast').data('location', data.notification.target_object_url);
-            $('.toast').data('uuid', data.notification.id);
-            notification_sound.play();
-            $('.toast').slideDown('slow', function () {
+            let toast = $(`<div class="toast" data-location="${data.notification.target_object_url}"
+                            id="${data.notification.id}">
+                                <div style="display:flex">
+                                    <div class="icon ${data.notification.level}"></div>
+                                    ${data.notification.message}
+                                </div>
+                           </div>`);
+            $('.ow-notifications').before(toast);
+            notificationSound.currentTime = 0;
+            notificationSound.play();
+            toast.slideDown('slow', function () {
                 setTimeout(function () {
-                    $('.toast').slideUp('slow', function () {
-                        $('.toast').data('location', null);
-                        $('.toast').empty();
+                    toast.slideUp('slow', function () {
+                        toast.remove();
                     });
                 }, 4000);
             });
         }
     };
     // Make toast message clickable
-    $('.toast').click(function (e) {
-        markNotificationRead(e.target);
+    $(document).on('click', '.toast', function () {
+        markNotificationRead($(this)[0]);
         window.location = $(this).data('location');
     });
 }
