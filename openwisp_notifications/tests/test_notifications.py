@@ -4,6 +4,7 @@ import openwisp_notifications.settings as app_settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.template import TemplateDoesNotExist
 from django.test import TestCase
@@ -503,3 +504,47 @@ class TestNotifications(TestOrganizationMixin, TestCase):
         # Ensure email is not sent for such notification
         self.assertEqual(len(mail.outbox), 0)
         unregister_notification_type('test_type')
+
+    def test_related_objects_cache(self):
+        operator = self._get_operator()
+        self.notification_options.update(
+            {'action_object': operator, 'target': operator}
+        )
+        self._create_notification()
+        n = notification_queryset.first()
+
+        with self.subTest('Test "actor" cache'):
+            self.assertEqual(n.actor, self.admin)
+            self.assertEqual(
+                self.admin, cache.get(Notification._cache_key(self.admin.pk))
+            )
+            # Test invalidation
+            self.admin.save()
+            self.assertEqual(cache.get(Notification._cache_key(self.admin.pk)), None)
+
+        with self.subTest('Test "action_object" cache'):
+            self.assertEqual(n.action_object, operator)
+            self.assertEqual(operator, cache.get(Notification._cache_key(operator.pk)))
+            # Test invalidation
+            operator.save()
+            self.assertEqual(cache.get(Notification._cache_key(operator.pk)), None)
+
+        with self.subTest('Test "target" cache'):
+            operator.refresh_from_db()
+            self.assertEqual(n.target, operator)
+            self.assertEqual(operator, cache.get(Notification._cache_key(operator.pk)))
+            # Test invalidation
+            operator.save()
+            self.assertEqual(cache.get(Notification._cache_key(operator.pk)), None)
+
+    def test_related_objects_database_query(self):
+        operator = self._get_operator()
+        self.notification_options.update(
+            {'action_object': operator, 'target': operator}
+        )
+        self._create_notification()
+        with self.assertNumQueries(2):
+            n = notification_queryset.first()
+            self.assertEqual(n.actor, self.admin)
+            self.assertEqual(n.action_object, operator)
+            self.assertEqual(n.target, operator)
