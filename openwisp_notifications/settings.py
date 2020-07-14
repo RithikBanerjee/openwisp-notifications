@@ -20,6 +20,10 @@ OPENWISP_NOTIFICATION_HTML_EMAIL = getattr(
     settings, 'OPENWISP_NOTIFICATION_HTML_EMAIL', True
 )
 
+OPENWISP_NOTIFICATION_CACHE_TIMEOUT = getattr(
+    settings, 'OPENWISP_NOTIFICATION_CACHE_TIMEOUT', 5 * 24 * 60 * 60
+)
+
 
 def get_config():
     user_config = getattr(settings, 'OPENWISP_NOTIFICATIONS_CONFIG', {})

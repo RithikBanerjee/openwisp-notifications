@@ -236,6 +236,16 @@ Additional ``notify`` keyword arguments
 |                     | Defaults to **None** meaning you need to provide other arguments.           |
 +---------------------+-----------------------------------------------------------------------------+
 
+Notification Cache
+------------------
+
+In a typical OpenWISP installation, ``actor``, ``action_object`` and ``target`` objects are same
+for a number of notifications. To optimize database queries, these objects are cached using
+`Django’s cache framework <https://docs.djangoproject.com/en/3.0/topics/cache/>`_.
+The cached values are updated automatically to reflect actual data from database. You can control
+the duration of caching these objects using
+`OPENWISP_NOTIFICATION_CACHE_TIMEOUT setting <#OPENWISP_NOTIFICATION_CACHE_TIMEOUT>`_
+
 Notification Types
 ------------------
 
@@ -433,6 +443,19 @@ This setting takes the URL of the logo to be displayed on email notification.
 
 **Note**: Provide a URL which points to the logo on your own web server. Ensure that the URL provided is
 publicly accessible from the internet. Otherwise, the logo may not be displayed in email.
+
+OPENWISP_NOTIFICATION_CACHE_TIMEOUT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-----------+------------------------+
+|   type    |  ``int`` (seconds)     |
++-----------+------------------------+
+|  default  |  ``432000`` `(5 days)` |
++-----------+------------------------+
+
+It sets the number of seconds the notification contents should be stored in the cache.
+If you want cached notification content to never expire, then set it to ``None``.
+Set it to ``0`` if you don't want to store notification contents in cache at all.
 
 REST API
 --------

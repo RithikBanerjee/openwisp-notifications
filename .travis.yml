@@ -23,6 +23,7 @@ services:
 branches:
   only:
     - master
+    - issues/12-websockets
 
 before_install:
   - pip install -U pip wheel
