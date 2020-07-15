@@ -77,6 +77,8 @@ Setup (integrate into an existing Django project)
         'django.contrib.admin',
         # notifications module
         'openwisp_notifications',
+        # channels
+        'channels',
      ]
 
 ``urls.py``:
@@ -946,5 +948,18 @@ See `OpenWISP Support Channels <http://openwisp.org/support.html>`_.
 Attributions
 ------------
 
-- `Icons <https://github.com/openwisp/openwisp-notifications/blob/master/openwisp_notifications/static/openwisp_notifications/images/icons/README.rst>`_
-- `Sound <https://github.com/openwisp/openwisp-notifications/blob/master/openwisp_notifications/static/openwisp_notifications/audio/README.rst>`_
+Icons
+~~~~~
+
+`Icons <https://github.com/openwisp/openwisp-notifications/tree/master/openwisp_notifications/static/openwisp_notifications/images/icons/>`_
+used are taken from `Font Awesome <https://fontawesome.com/>`_ project.
+
+LICENSE: `https://fontawesome.com/license <https://fontawesome.com/license>`_
+
+Sound
+~~~~~
+
+`Notification sound <https://github.com/openwisp/openwisp-notifications/tree/master/openwisp_notifications/static/openwisp_notifications/audio>`_
+is taken from `Notification Sounds <https://notificationsounds.com/>`_.
+
+LICENSE: `Creative Commons Attribution license <https://creativecommons.org/licenses/by/4.0/legalcode>`_

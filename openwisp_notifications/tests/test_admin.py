@@ -62,7 +62,7 @@ class TestAdmin(TestOrganizationMixin, TestCase):
 
     def _expected_output(self, count=None):
         if count:
-            return '<span id="notification-count">{0}</span>'.format(count)
+            return '<span id="ow-notification-count">{0}</span>'.format(count)
         return f'id="{self.app_label}">'
 
     def test_zero_notifications(self):

@@ -10,7 +10,7 @@ def notification_update_handler(reload_widget=False, notification=None, recipien
     async_to_sync(channel_layer.group_send)(
         'ow_notification',
         {
-            'type': 'notification.send_updates',
+            'type': 'send.updates',
             'reload_widget': reload_widget,
             'notification': notification,
             'recipient': str(recipient.pk),
