@@ -5,9 +5,9 @@ const notificationSocket = new ReconnectingWebSocket(
     `ws://${window.location.host}/ws/notifications/`
 );
 const notificationSound = new Audio('/static/openwisp_notifications/audio/notification_bell.mp3');
-const observer = new IntersectionObserver(notificationIntersectionObserver, {
+const notificationObserver = new IntersectionObserver(notificationIntersectionObserver, {
     threshold: 1,
-    root: document.querySelector('.notification-wrapper')
+    root: document.querySelector('.ow-notification-wrapper')
 });
 
 (function ($) {
@@ -21,14 +21,14 @@ const observer = new IntersectionObserver(notificationIntersectionObserver, {
 function initNotificationDropDown($) {
     $('.ow-notifications').click(function (e) {
         e.stopPropagation();
-        $('.notification-dropdown').toggleClass('hide');
+        $('.ow-notification-dropdown').toggleClass('ow-hide');
     });
 
     $(document).click(function (e) {
         e.stopPropagation();
         // Check if the clicked area is dropDown or not
-        if ($('.notification-dropdown').has(e.target).length === 0) {
-            $('.notification-dropdown').addClass('hide');
+        if ($('.ow-notification-dropdown').has(e.target).length === 0) {
+            $('.ow-notification-dropdown').addClass('ow-hide');
         }
     });
 }
@@ -48,16 +48,16 @@ function notificationWidget($) {
             let elem = $(notificationListItem(notification));
             div.append(elem);
             if (notification.unread) {
-                observer.observe(elem[0]);
+                notificationObserver.observe(elem[0]);
             }
         });
         return div;
     }
 
     function appendPage() {
-        $('.notification-wrapper').append(pageContainer(fetchedPages[lastRenderedPage]));
+        $('.ow-notification-wrapper').append(pageContainer(fetchedPages[lastRenderedPage]));
         if (lastRenderedPage >= renderedPages) {
-            $('.notification-wrapper div:first').remove();
+            $('.ow-notification-wrapper div:first').remove();
         }
         lastRenderedPage += 1;
         busy = false;
@@ -71,17 +71,17 @@ function notificationWidget($) {
                 nextPageUrl = res.next;
                 if (res.count === 0) {
                     // If response does not have any notification, show no-notifications message.
-                    $('.no-notifications').removeClass('hide');
-                    $('#mark-all-read').addClass('disabled');
-                    if ($('#show-unread').html() !== 'Show all') {
-                        $('#show-unread').addClass('disabled');
+                    $('.ow-no-notifications').removeClass('ow-hide');
+                    $('#ow-mark-all-read').addClass('disabled');
+                    if ($('#ow-show-unread').html() !== 'Show all') {
+                        $('#ow-show-unread').addClass('disabled');
                     }
                     busy = false;
                 } else {
                     fetchedPages.push(res.results);
                     appendPage();
                     // Remove 'no new notification' message.
-                    $('.no-notifications').addClass('hide');
+                    $('.ow-no-notifications').addClass('ow-hide');
                     $('.btn').removeClass('disabled');
                 }
             },
@@ -106,9 +106,9 @@ function notificationWidget($) {
     function pageUp() {
         busy = true;
         if (lastRenderedPage > renderedPages) {
-            $('.notification-wrapper div.page:last').remove();
+            $('.ow-notification-wrapper div.page:last').remove();
             var addedDiv = pageContainer(fetchedPages[lastRenderedPage - renderedPages - 1]);
-            $('.notification-wrapper').prepend(addedDiv);
+            $('.ow-notification-wrapper').prepend(addedDiv);
             lastRenderedPage -= 1;
         }
         busy = false;
@@ -116,9 +116,9 @@ function notificationWidget($) {
 
     function onUpdate() {
         if (!busy) {
-            var scrollTop = $('.notification-wrapper').scrollTop(),
-                scrollBottom = scrollTop + $('.notification-wrapper').innerHeight(),
-                height = $('.notification-wrapper')[0].scrollHeight;
+            var scrollTop = $('.ow-notification-wrapper').scrollTop(),
+                scrollBottom = scrollTop + $('.ow-notification-wrapper').innerHeight(),
+                height = $('.ow-notification-wrapper')[0].scrollHeight;
             if (height * 0.90 <= scrollBottom) {
                 pageDown();
             } else if (height * 0.10 >= scrollTop) {
@@ -144,10 +144,13 @@ function notificationWidget($) {
             timestamp = elem_timestamp.toLocaleTimeString();
         }
 
-        return `<div class="notification-elem ${klass}" id=${elem.id}
+        return `<div class="ow-notification-elem ${klass}" id=ow-${elem.id}
                         data-location="${elem.target_object_url}">
-                    <div class="notification-meta">
-                        <div class="${elem.level} icon"></div>
+                    <div class="ow-notification-meta">
+                        <div class="ow-notification-level-wrapper">
+                            <div class="ow-notify-${elem.level} icon"></div>
+                            <div class="ow-notification-level-text">${elem.level}</div>
+                        </div>
                         <div>${timestamp}</div>
                     </div>
                     ${elem.message}
@@ -155,23 +158,23 @@ function notificationWidget($) {
     }
 
     function initNotificationWidget($) {
-        $('.notification-wrapper').on('scroll', onUpdate);
+        $('.ow-notification-wrapper').on('scroll', onUpdate);
         onUpdate();
     }
 
     function refreshNotificationWidget(e = null, url = '/api/v1/notifications/') {
-        $('.notification-wrapper').empty();
+        $('.ow-notification-wrapper').empty();
         fetchedPages.length = 0;
         lastRenderedPage = 0;
         nextPageUrl = url;
         notificationReadStatus.clear();
-        $('.notification-wrapper').scroll();
+        $('.ow-notification-wrapper').scroll();
     }
 
     initNotificationWidget($);
 
     // Handler for filtering unread notifications
-    $('#show-unread').click(function () {
+    $('#ow-show-unread').click(function () {
         if ($(this).html() === 'Show unread only') {
             refreshNotificationWidget(null, '/api/v1/notifications/?unread=true');
             $(this).html('Show all');
@@ -182,7 +185,7 @@ function notificationWidget($) {
     });
 
     // Handler for marking all notifications read
-    $('#mark-all-read').click(function () {
+    $('#ow-mark-all-read').click(function () {
         $.ajax({
             type: 'POST',
             url: `/api/v1/notifications/read/`,
@@ -191,7 +194,7 @@ function notificationWidget($) {
             },
             success: function () {
                 refreshNotificationWidget();
-                $('#show-unread').html('Show unread only');
+                $('#ow-show-unread').html('Show unread only');
             },
             error: function (error) {
                 throw error;
@@ -200,7 +203,7 @@ function notificationWidget($) {
     });
 
     // Handler for marking single notification as read
-    $('.notification-wrapper').on('click', '.notification-elem', function () {
+    $('.ow-notification-wrapper').on('click', '.ow-notification-elem', function () {
         let elem = $(this);
         // If notification is unread then send read request
         if (elem.hasClass('unread')) {
@@ -209,34 +212,37 @@ function notificationWidget($) {
         window.location = elem.data('location');
     });
 
-    $('.notification-wrapper').bind('refreshNotificationWidget', refreshNotificationWidget);
+    $('.ow-notification-wrapper').bind('refreshNotificationWidget', refreshNotificationWidget);
 }
 
 function markNotificationRead(elem) {
+    let elemId = elem.id.replace('ow-', '');
     notificationSocket.send(
         JSON.stringify({
-            'notification_id': elem.id
+            notification_id: elemId
         })
     );
     try {
-        document.querySelector(`#${elem.id}.notification-elem`).classList.remove('unread');
-    } catch (error) {}
-    notificationReadStatus.set(elem.id, 'read');
-    observer.unobserve(elem);
+        document.querySelector(`#${elem.id}.ow-notification-elem`).classList.remove('unread');
+    } catch (error) {
+        throw error;
+    }
+    notificationReadStatus.set(elemId, 'read');
+    notificationObserver.unobserve(elem);
 }
 
 function initWebSockets($) {
     notificationSocket.onmessage = function (e) {
         let data = JSON.parse(e.data);
         // Update notification count
-        let countTag = $('#notification-count');
+        let countTag = $('#ow-notification-count');
         if (data.notification_count === 0) {
             countTag.remove();
         } else {
             // If unread tag is not present than insert it.
             // Otherwise, update innerHTML.
             if (countTag.length === 0) {
-                let html = `<span id="notification-count">${data.notification_count}</span>`;
+                let html = `<span id="ow-notification-count">${data.notification_count}</span>`;
                 $('.ow-notifications').append(html);
             } else {
                 countTag.html(data.notification_count);
@@ -244,14 +250,14 @@ function initWebSockets($) {
         }
         // Check whether to update notification widget
         if (data.reload_widget) {
-            $('.notification-wrapper').trigger('refreshNotificationWidget');
+            $('.ow-notification-wrapper').trigger('refreshNotificationWidget');
         }
         // Check whether to display notification toast
         if (data.notification) {
-            let toast = $(`<div class="toast" data-location="${data.notification.target_object_url}"
-                            id="${data.notification.id}">
+            let toast = $(`<div class="ow-notification-toast" data-location="${data.notification.target_object_url}"
+                            id="ow-${data.notification.id}">
                                 <div style="display:flex">
-                                    <div class="icon ${data.notification.level}"></div>
+                                    <div class="icon ow-notify-${data.notification.level}"></div>
                                     ${data.notification.message}
                                 </div>
                            </div>`);
@@ -268,7 +274,7 @@ function initWebSockets($) {
         }
     };
     // Make toast message clickable
-    $(document).on('click', '.toast', function () {
+    $(document).on('click', '.ow-notification-toast', function () {
         markNotificationRead($(this)[0]);
         window.location = $(this).data('location');
     });

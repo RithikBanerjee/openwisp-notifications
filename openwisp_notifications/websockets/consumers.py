@@ -30,7 +30,7 @@ class NotificationConsumer(WebsocketConsumer):
             'ow_notification', self.channel_name
         )
 
-    def notification_send_updates(self, event):
+    def send_updates(self, event):
         user = self.scope['user']
         # Send message only if notification belongs to current user
         if event['recipient'] == str(user.pk):
