@@ -56,7 +56,7 @@ Setup (integrate into an existing Django project)
 
 .. code-block:: python
 
-     INSTALLED_APPS = [
+    INSTALLED_APPS = [
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
@@ -80,6 +80,29 @@ Setup (integrate into an existing Django project)
         # channels
         'channels',
      ]
+    ]
+
+Add ``notification_api_settings`` context processor:
+
+.. code-block:: python
+
+    TEMPLATES = [
+        {
+            ...
+            'OPTIONS': {
+                ...
+                'context_processors': [
+                    ...
+                    'openwisp_notifications.context_processors.notification_api_settings',
+                    ...
+                ],
+            },
+        },
+    ]
+
+**Note**: You can skip adding ``notification_api_settings`` context processor
+if you don't intend to use ``OPENWISP_NOTIFICATION_SOUND`` or ``OPENWISP_NOTIFICATION_HOST``
+settings.
 
 ``urls.py``:
 
@@ -363,8 +386,8 @@ An example usage is shown below.
 **Note**: It will raise ``ImproperlyConfigured`` exception if the concerned notification type is not
 registered.
 
-Settings
---------
+Settings (Optional)
+-------------------
 
 ``OPENWISP_NOTIFICATION_HTML_EMAIL``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -433,6 +456,47 @@ This setting takes the URL of the logo to be displayed on email notification.
 
 **Note**: Provide a URL which points to the logo on your own web server. Ensure that the URL provided is
 publicly accessible from the internet. Otherwise, the logo may not be displayed in email.
+
+OPENWISP_NOTIFICATION_HOST
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-----------+-----------------------------------------+
+|   type    |  ``str``                                |
++-----------+-----------------------------------------+
+|  default  |  Any domain defined in ``ALLOWED_HOST`` |
++-----------+-----------------------------------------+
+
+This setting defines the domain at which API and Web Socket communitcate for
+working of notification widget.
+
+Provide root domain as follows:
+
+.. code-block:: python
+
+    OPENWISP_NOTIFICATION_HOST = 'https://www.example.com'
+
+This feature requires you to allow `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_
+on your server. You can use ``django-cors-headers`` module to easily setup CORS headers.
+Refer to `django-core-headers's setup documentation <https://github.com/adamchainz/django-cors-headers#setup>`_.
+
+OPENWISP_NOTIFICATION_SOUND
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-----------+--------------------------------------------------------------------------------------------+
+|   type    |  ``str``                                                                                   |
++-----------+--------------------------------------------------------------------------------------------+
+|  default  |  `notification_bell.mp3 <https://github.com/openwisp/openwisp-notifications/tree/master/ \ |
+|           |  openwisp_notifications/static/openwisp_notifications/audio/notification_bell.mp3>`_       |
++-----------+--------------------------------------------------------------------------------------------+
+
+This setting defines notification sound to be played when notification is received
+in real-time on admin site.
+
+Provide an absolute or relative path(hosted on your webserver) to audio file as show below.
+
+.. code-block:: python
+
+    OPENWISP_NOTIFICATION_SOUND = '/static/your-appname/audio/notification.mp3'
 
 REST API
 --------
